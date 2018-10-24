@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+    helper_method :chosen_rating?
 
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
@@ -18,6 +19,25 @@ class MoviesController < ApplicationController
         @movies = Movie.order('release_date')
    else
    @movies = Movie.all
+        
+        
+        
+        
+        
+        #if (params[:ratings].nil? && !session[:ratings].nil?) || (params[:order].nil? && !session[:order].nil?)
+      #redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
+    #elsif !params[:ratings].nil? || !params[:order].nil?
+      #if !params[:ratings].nil?
+        #array_ratings = params[:ratings].keys
+        #return @movies = Movie.where(rating: array_ratings).order(session[:order])
+     #else
+        #return @movies = Movie.all.order(session[:order])
+      #end
+    #elsif !session[:ratings].nil? || !session[:order].nil?
+      #redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
+    #else
+      #return @movies = Movie.all
+   # end
     end
       
   end
@@ -48,6 +68,12 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+    
+  def chosen_rating?(rating)
+    chosen_ratings = session[:ratings]
+    return true if chosen_ratings.nil?
+    chosen_ratings.include? rating
   end
 
 end
