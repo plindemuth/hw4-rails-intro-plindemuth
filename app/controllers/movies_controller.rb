@@ -13,31 +13,29 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = ['G','PG','PG-13','R']
+   
+      if (params[:ratings].nil? && !session[:ratings].nil?) || (params[:order].nil? && !session[:order].nil?)
+          redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
+      elsif !params[:ratings].nil? || !params[:order].nil?
+          if !params[:ratings].nil?
+            array_ratings = params[:ratings].keys
+            return @movies = Movie.where(rating: array_ratings).order(session[:order])
+          else
+            return @movies = Movie.all.order(session[:order])
+          end
+     elsif !session[:ratings].nil? || !session[:order].nil?
+       redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
+     else
+       return @movies = Movie.all
+     end
     if params[:sort] == "title"
         @movies = Movie.order('title')
     elsif params[:sort] == "release_date"
         @movies = Movie.order('release_date')
-   else
-   @movies = Movie.all
-        
-        
-        
-        
-        
-        #if (params[:ratings].nil? && !session[:ratings].nil?) || (params[:order].nil? && !session[:order].nil?)
-      #redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
-    #elsif !params[:ratings].nil? || !params[:order].nil?
-      #if !params[:ratings].nil?
-        #array_ratings = params[:ratings].keys
-        #return @movies = Movie.where(rating: array_ratings).order(session[:order])
-     #else
-        #return @movies = Movie.all.order(session[:order])
-      #end
-    #elsif !session[:ratings].nil? || !session[:order].nil?
-      #redirect_to movies_path("ratings" => session[:ratings], "order" => session[:order])
-    #else
-      #return @movies = Movie.all
-   # end
+    elsif params[:ratings].nil?
+        @movies = Movie.all
+    else
+   @movies = Movie.where(rating: array_ratings)
     end
       
   end
